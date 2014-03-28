@@ -1,0 +1,180 @@
+<% provide(:title, 'Calendar') %>
+
+<input id="reloadValue" type="hidden" name="reloadValue" value="" />
+<div id="event_click_dialog" title="Dialog Title">I'm a dialog</div>
+<div id="create_dialog" title="Create New Event">Holy balls a new event!</div>
+
+<div id="dialog-form" title="Create new user">
+  <p class="validateTips">All form fields are required.</p>
+  <form>
+  <fieldset>
+    <label for="date">Date</label>
+    <input type="date" name="date" id="date" class="text ui-widget-content ui-corner-all">
+    <label for="book">Book</label>
+    <input type="text" name="book" id="book" class="text ui-widget-content ui-corner-all">
+    <label for="first_chapter">First Chapter</label>
+    <input type="number" name="first_chapter" id="first_chapter" value="" class="text ui-widget-content ui-corner-all">
+    <label for="first_verse">First Verse</label>
+    <input type="number" name="first_verse" id="first_verse" value="" class="text ui-widget-content ui-corner-all">
+    <label for="last_verse">Last Verse</label>
+    <input type="number" name="last_verse" id="last_verse" value="" class="text ui-widget-content ui-corner-all">
+  </fieldset>
+  </form>
+</div>
+
+<button id="create-user">Create new user</button>
+
+<p><a href="#" id="create_dialog_link" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-newwin"></span>New Event</a></p>
+<div id='wrap'>
+
+<div id='calendar'></div>
+
+<div style='clear:both'></div>
+</div>
+
+
+
+  <script>
+      $(document).ready(function() {
+        
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
+        var globalevent_id = "";
+
+        var date = $( "#date" ),
+          book = $( "#book" ),
+          first_chapter = $( "#first_chapter" ),
+          first_verse = $( "#first_verse" ),
+          last_chapter = $( "#last_verse" );
+
+        $( "#dialog-form" ).dialog({
+          autoOpen: false,
+          height: 500,
+          width: 350,
+          modal: true,
+          buttons: {
+            Create: function() {
+              $.create(
+                '/sermons',
+                { sermon_date: date, book: book, fist_chapter: first_chapter, first_verse: first_verse, last_verse: last_verse }
+              );
+              $( this ).dialog( "close" );            
+              $('#calendar').fullCalendar( 'refetchEvents' );
+              $('#calendar').fullCalendar( 'rerenderEvents' );
+
+            },
+            Cancel: function() {
+              $( this ).dialog( "close" );
+            }
+          },
+          close: function() {
+            allFields.val( "" ).removeClass( "ui-state-error" );
+          }
+        });
+     
+        $( "#create-user" ).button().click(function() {
+            $( "#dialog-form" ).dialog( "open" );
+        });
+  
+        $( "#event_click_dialog" ).dialog({ 
+          autoOpen: false,
+          width: 400,
+          buttons: [
+            {
+              text: "Edit",
+              click: function() {
+                var event_url = '/sermons/' + globalevent_id + '/edit';
+                window.location.href = event_url;
+              }
+            },
+            {
+              text: "Destroy",
+              click: function() {
+                $.destroy({
+                  url: '/sermons/' + globalevent_id
+                });
+                $('#calendar').fullCalendar('removeEvents', globalevent_id);
+                $( this ).dialog( "close" );
+              }
+            }
+          ]
+        });
+
+        $( "#create_dialog" ).dialog({
+          autoOpen: false,
+          width: 400,
+          buttons: [
+            {
+              text: "Google, bitches.",
+              click: function() {
+                window.location.href = "http://www.google.com";
+              }
+            },
+            {
+              text: "Cancel",
+              click: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+          ]
+        });
+
+        $( "#create_dialog_link" ).click(function( event ) {
+          $( "#create_dialog" ).dialog( "open" );
+          event.preventDefault();
+        });
+
+        $( "#create_dialog_link, #icons li" ).hover(
+          function() {
+            $( this ).addClass( "ui-state-hover" );
+          },
+          function() {
+            $( this ).removeClass( "ui-state-hover" );
+          }
+        );
+
+
+        
+        $('#calendar').fullCalendar({
+          editable: true,
+          eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
+            var event_id = parseInt(event.id);
+            var event_start = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd');
+            $.update(
+                '/sermons/' + event_id,
+                { sermon: {sermon_date: event_start, id: event_id} }
+              );
+            $('#calendar').fullCalendar('updateEvent', event);
+
+          },
+          eventClick: function(event, jsEvent, view) {
+            var event_id = parseInt(event.id);
+            globalevent_url = '/sermons/' + event_id + '/edit';
+            globalevent_id = event_id;
+            $( "#event_click_dialog" ).dialog( "open" );
+          },
+          events: [
+
+            <% @sermons.drop(1).each do |sermon| %>
+            {
+              id: '<%= sermon.id %>',
+              title: '<%= sermon_title(sermon) %>',
+              start: new Date(<%= sermon.sermon_date.strftime("%Y") %>, <%= sermon.sermon_date.strftime("%m") %>-1, <%= sermon.sermon_date.strftime("%d") %>),
+              
+              
+          	},
+            <% end %>
+            {
+              id: '<%= @sermons.first.id %>',
+              title: '<%= sermon_title(@sermons.first) %>',
+              start: new Date(<%= @sermons.first.sermon_date.strftime("%Y") %>, <%= @sermons.first.sermon_date.strftime("%m") %>-1, <%= @sermons.first.sermon_date.strftime("%d") %>),
+              
+            }
+          ]
+        });
+        
+      });
+
+    </script>

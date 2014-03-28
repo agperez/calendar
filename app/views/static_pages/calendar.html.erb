@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+    <h2 id="index_heading">
+      <em>
+        Sermon Archive:
+      </em>
+    </h2>
+    <%= link_to(@sermons_recent.first) do %>
+		  <button type="button" class="btn btn-primary btn-lg btn-block">
+		    <span id="arch_list_date"><%= @sermons.first.s_date.strftime("%B %d") %>,</span>
+        <span id="arch_list_name"><em> <%= sermon_title(@sermons.first) %></em></span> 
+		  </button>
+    <% end %>
+    <% @sermons.drop(1).each do |sermon| %>
+      <%= link_to(sermon) do %>
+			  <button type="button" class="btn btn-default btn-lg btn-block">
+			    <span id="arch_list_date"><%= sermon.s_date.strftime("%B %d") %>,</span>
+          <span id="arch_list_name"><em> <%= sermon_title(sermon) %></em></span> 
+			  </button>   
+      <% end %>   
+		<% end %>
+  </div>    
+</div>
+
+<div id='wrap'>
+
+<div id='calendar'></div>
+
+<div style='clear:both'></div>
+</div>

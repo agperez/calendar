@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Book:</strong>
+  <%= @sermon.book %>
+</p>
+
+<p>
+  <strong>Sermon date:</strong>
+  <%= @sermon.sermon_date %>
+</p>
+
+<p>
+  <strong>First chapter:</strong>
+  <%= @sermon.first_chapter %>
+</p>
+
+<p>
+  <strong>Last chapter:</strong>
+  <%= @sermon.last_chapter %>
+</p>
+
+<p>
+  <strong>First verse:</strong>
+  <%= @sermon.first_verse %>
+</p>
+
+<p>
+  <strong>Last verse:</strong>
+  <%= @sermon.last_verse %>
+</p>
+
+<%= link_to 'Edit', edit_sermon_path(@sermon) %> |
+<%= link_to 'Back', sermons_path %>

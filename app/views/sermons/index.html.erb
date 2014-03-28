@@ -1,0 +1,6 @@
+
+<% @books.keys.each do |book| %><% case @books[book].first.color %><% when "#59BA53" %>cupid green<% when "#FFAD46" %>cupid orange<% end %><% end %>
+
+<br>
+
+<%= link_to 'New Sermon', new_sermon_path %>

@@ -1,0 +1,41 @@
+<%= form_for(@sermon) do |f| %>
+  <% if @sermon.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@sermon.errors.count, "error") %> prohibited this sermon from being saved:</h2>
+
+      <ul>
+      <% @sermon.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :book %><br>
+    <%= f.text_field :book %>
+  </div>
+  <div class="field">
+    <%= f.label :sermon_date %><br>
+    <%= f.date_select :sermon_date %>
+  </div>
+  <div class="field">
+    <%= f.label :first_chapter %><br>
+    <%= f.number_field :first_chapter %>
+  </div>
+  <div class="field">
+    <%= f.label :last_chapter %><br>
+    <%= f.number_field :last_chapter %>
+  </div>
+  <div class="field">
+    <%= f.label :first_verse %><br>
+    <%= f.number_field :first_verse %>
+  </div>
+  <div class="field">
+    <%= f.label :last_verse %><br>
+    <%= f.number_field :last_verse %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
