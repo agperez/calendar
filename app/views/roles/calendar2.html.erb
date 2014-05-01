@@ -2,41 +2,6 @@
 
 <input id="reloadValue" type="hidden" name="reloadValue" value="" />
 
-<p>
-<% @teams.each do |team| %>
-	<% team.events.each do |event| %>
-		<%= event.event_date %>
-		<%= event.user_id %>
-		<br>
-	<% end %>
-<% end %>
-
-<br>
-
-<% @users.each do |user| %>
-  Name: <%= user.name %>
-  <Br>
-  Role: <%= user.role.name %>  
-  <br>
-  <% user.events.each do |event| %>
-  	<%= event.event_date %> <%= event.role_id %>
-  	<Br>
-  <% end %>
-  <br>
-<% end %>
-
-<% @roles.each do |role| %>
-  <%= role.name %>:
-  <Br>
-  <%= role.id %>  
-  <% role.users.each do |user| %>
-    <%= user.name %>
-  <% end %>
-  <Br>
-<% end %> 
-
-</p>
-
 <div id="select_add_dialog">
   <form>
     <fieldset>
@@ -79,7 +44,7 @@
     var global_start_date = "";
 
     <% @teams.each do |team| %>  
-      var <%= team.name %>_users = [       
+      var <%= team.name.downcase.tr(" ", "_") %>_users = [       
         <% team.users.each do |user| %>
           {
             userID: <%= user.id %>,
@@ -90,13 +55,13 @@
         <% end %>
       ]
 
-      var result = "<%= team.name %>_users";
+      var result = "<%= team.name.downcase.tr(" ", "_") %>_users";
 
       var result2 = eval(result);
 
-      $('#external-events').append("<div class='external-event' id='<%=team.name%>_users'><%= team.name %></div>");
+      $('#external-events').append("<div class='external-event' id='<%=team.name.downcase.tr(" ", "_")%>_users'><%= team.name %></div>");
 
-      $('#<%=team.name%>_users').each(function() {
+      $('#<%=team.name.downcase.tr(" ", "_")%>_users').each(function() {
         
         // make the event draggable using jQuery UI
         $(this).draggable({
@@ -188,7 +153,11 @@
 
         // Update the event date in the CALENDAR event object
         $('#calendar').fullCalendar('updateEvent', event);
-      }
+      },
+
+      hiddenDays: [ 1, 2, 3, 4, 5, 6 ]
+
+
 
     });
 

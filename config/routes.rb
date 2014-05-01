@@ -44,6 +44,8 @@ SampleApp::Application.routes.draw do
   match '/multiple', to: 'events#new_multiple_events', via: 'get'
   match '/new_team_event', to: 'teams#new_team_event', via: 'get'
 
+  match '/dashboard', to: 'static_pages#dashboard', via: 'get'
+
 
 
   

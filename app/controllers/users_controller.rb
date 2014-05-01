@@ -5,6 +5,7 @@ class UsersController < ApplicationController
   # prevent anyone except admins from using the delete method		
   before_action :admin_user, 		only: :destroy
 
+
   def new
   	@user = User.new
   end
@@ -39,12 +40,19 @@ class UsersController < ApplicationController
   end
 
   def update
-  	if @user.update_attributes(user_params)
-		flash[:success] = "Profile updated"
-		redirect_to @user
-	else
-		render 'edit'
-	end
+    if user_params[:password].blank?
+      user_params.delete(:password)
+      user_params.delete(:password_confirmation)
+    end
+    if @user.update_attributes(user_params)
+      flash[:success] = @user.name + " has been updated"
+      redirect_to dashboard_path
+  	elsif @user.update_attributes(user_params)
+		  flash[:success] = "Profile updated"
+		  redirect_to @user
+  	else
+  		render dashboard_path
+  	end
   end
 
   def destroy
@@ -55,13 +63,15 @@ class UsersController < ApplicationController
 
   private
   	def user_params
-  		params.require(:user).permit(:name, :email, :password, :password_confirmation, :team_id)	
+  		params.require(:user).permit(:name, :email, :password, :password_confirmation, :team_id, :role_id, events_attributes: [:user_id, :role_id])	
   	end
+
+
 
   	# Checks if the user is the same as the user for who's action they are trying to access. 
   	def correct_user
   		@user = User.find(params[:id])
-  		redirect_to(root_url) unless current_user?(@user)
+  		redirect_to(root_url) unless current_user?(@user) || current_user.admin?
   	end
 
   	# Checks if the user's admin-boolean = true.

@@ -6,6 +6,14 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :events
 
+  after_save do
+  	self.events.each do |e|
+  		e.role_id = role_id
+  		e.team_id = team_id 
+  		e.save
+  	end
+  end
+
   
   #Relationships for MICROPOSTS
   has_many :microposts, dependent: :destroy
@@ -35,7 +43,7 @@ class User < ActiveRecord::Base
 						  uniqueness: { case_sensitive: false }
 
 	has_secure_password
-	validates :password, length: { minimum: 6 }
+	validates :password, length: { minimum: 6 }, :if => :password
 
 	def User.new_remember_token
 		SecureRandom.urlsafe_base64
